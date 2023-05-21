@@ -26,7 +26,6 @@ def count():
     """return length of data"""
     if data:
         return jsonify(length=len(data)), 200
-
     return {"message": "Internal server error"}, 500
 
 
@@ -73,16 +72,22 @@ def create_picture():
 
 @app.route("/picture/<int:id>", methods=["PUT"])
 def update_picture(id):
-    pass
+    pictures = data
+    picture_data = request.get_json()
+    for picture in pictures:
+        if picture['id'] == id:
+            picture['event_state'] = picture_data['event_state']
+            return jsonify(picture)
+    abort(404)
 
 ######################################################################
 # DELETE A PICTURE
 ######################################################################
 @app.route("/picture/<int:id>", methods=["DELETE"])
 def delete_picture(id):
-    pictures = data
-    for picture in pictures:
-        if picture['id'] == id:
-            pictures.remove(picture)
-            return '', 204
-    abort(404)
+    for picture in data:
+        if picture["id"] == id:
+            data.remove(picture)
+            return "", 204
+
+    return {"message": "picture not found"}, 404
